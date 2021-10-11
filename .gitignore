@@ -8,3 +8,5 @@ lib/
 .settings/
 
 projet-f103_clone.cfg
+
+Debug/

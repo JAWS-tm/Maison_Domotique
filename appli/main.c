@@ -13,6 +13,9 @@
 #include "macro_types.h"
 #include "systick.h"
 
+
+#include "buttons.h";
+
 void writeLED(bool_e b)
 {
 	HAL_GPIO_WritePin(LED_GREEN_GPIO, LED_GREEN_PIN, b);
@@ -57,12 +60,26 @@ int main(void)
 
 
 
+	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
+	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
+	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
+
+
 	while(1)	//boucle de tâche de fond
 	{
 		if(!t)
 		{
-			t = 200;
-			HAL_GPIO_TogglePin(LED_GREEN_GPIO, LED_GREEN_PIN);
+			t = 10;
+			switch(BUTTONS_press_event()) {
+				case BUTTON_ID_LIGHT:
+					break;
+				case BUTTON_ID_STORE:
+					break;
+				case BUTTON_ID_WINDOW:
+					break;
+			}
+
+			//HAL_GPIO_TogglePin(LED_GREEN_GPIO, LED_GREEN_PIN);
 		}
 
 	}
