@@ -14,7 +14,7 @@
 #include "systick.h"
 
 
-#include "buttons.h";
+#include "buttons.h"
 
 void writeLED(bool_e b)
 {
@@ -50,19 +50,19 @@ int main(void)
 	SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
 
 	//Initialisation du port de la led Verte (carte Nucleo)
-	BSP_GPIO_PinCfg(LED_GREEN_GPIO, LED_GREEN_PIN, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH);
+	BSP_GPIO_PinCfg(GPIOC, GPIO_PIN_13, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH);
 
 	//Initialisation du port du bouton bleu (carte Nucleo)
-	BSP_GPIO_PinCfg(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN, GPIO_MODE_INPUT,GPIO_PULLUP,GPIO_SPEED_FREQ_HIGH);
+	//BSP_GPIO_PinCfg(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN, GPIO_MODE_INPUT,GPIO_PULLUP,GPIO_SPEED_FREQ_HIGH);
 
 	//On ajoute la fonction process_ms à la liste des fonctions appelées automatiquement chaque ms par la routine d'interruption du périphérique SYSTICK
 	Systick_add_callback_function(&process_ms);
 
 
-
+	printf("test init");
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
-	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
-	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
+	/*BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
+	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
 
 
 	while(1)	//boucle de tâche de fond
@@ -72,14 +72,18 @@ int main(void)
 			t = 10;
 			switch(BUTTONS_press_event()) {
 				case BUTTON_ID_LIGHT:
+					printf("test");
+					HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 					break;
 				case BUTTON_ID_STORE:
 					break;
 				case BUTTON_ID_WINDOW:
 					break;
+				default:
+					break;
 			}
 
-			//HAL_GPIO_TogglePin(LED_GREEN_GPIO, LED_GREEN_PIN);
+
 		}
 
 	}
