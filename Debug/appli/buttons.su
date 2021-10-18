@@ -1,2 +1,0 @@
-buttons.c:22:6:BUTTONS_initBtn	24	static
-buttons.c:30:13:BUTTONS_press_event	16	static
