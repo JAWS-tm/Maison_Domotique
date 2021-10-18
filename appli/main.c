@@ -15,6 +15,7 @@
 
 
 #include "buttons.h"
+#include "light.h"
 
 void writeLED(bool_e b)
 {
@@ -44,13 +45,13 @@ int main(void)
 	//Initialisation de l'UART2 à la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
 		//Attention, les pins PA2 et PA3 ne sont pas reliées jusqu'au connecteur de la Nucleo.
 		//Ces broches sont redirigées vers la sonde de débogage, la liaison UART étant ensuite encapsulée sur l'USB vers le PC de développement.
-	UART_init(UART2_ID,115200);
+	UART_init(UART1_ID,115200);
 
 	//"Indique que les printf sortent vers le périphérique UART2."
-	SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
+	SYS_set_std_usart(UART1_ID, UART1_ID, UART1_ID);
 
 	//Initialisation du port de la led Verte (carte Nucleo)
-	BSP_GPIO_PinCfg(GPIOC, GPIO_PIN_13, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH);
+	//BSP_GPIO_PinCfg(GPIOC, GPIO_PIN_13, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH);
 
 	//Initialisation du port du bouton bleu (carte Nucleo)
 	//BSP_GPIO_PinCfg(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN, GPIO_MODE_INPUT,GPIO_PULLUP,GPIO_SPEED_FREQ_HIGH);
@@ -58,26 +59,28 @@ int main(void)
 	//On ajoute la fonction process_ms à la liste des fonctions appelées automatiquement chaque ms par la routine d'interruption du périphérique SYSTICK
 	Systick_add_callback_function(&process_ms);
 
+	LIGHT_init();
 
-	printf("test init");
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
-	/*BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
-	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
-
+	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
+	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
 
 	while(1)	//boucle de tâche de fond
 	{
+
 		if(!t)
 		{
 			t = 10;
 			switch(BUTTONS_press_event()) {
 				case BUTTON_ID_LIGHT:
-					printf("test");
-					HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+					printf("light\n");
+					LIGHT_set_state(!LIGHT_get_state());
 					break;
 				case BUTTON_ID_STORE:
+					printf("store\n");
 					break;
 				case BUTTON_ID_WINDOW:
+					printf("window\n");
 					break;
 				default:
 					break;
