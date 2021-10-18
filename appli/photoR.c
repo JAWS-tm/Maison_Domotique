@@ -9,11 +9,11 @@
 
 
 
-uint8_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR){
+uint16_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR){
 	if(selectPhotoR == INT){
-		return (uint8_t) (ADC_getValue(PHOTO_R_INT_ADC));
+		return ADC_getValue(PHOTO_R_INT_ADC);
 	}
 	else if(selectPhotoR == EXT){
-			return (uint8_t) (ADC_getValue(PHOTO_R_EXT_ADC));
+			return ADC_getValue(PHOTO_R_EXT_ADC);
 		}
 }
