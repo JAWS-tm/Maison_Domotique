@@ -12,7 +12,8 @@ typedef enum {
 	BUTTON_ID_LIGHT = 0,
 	BUTTON_ID_STORE,
 	BUTTON_ID_WINDOW,
-	BUTTON_ID_NB
+	BUTTON_ID_NB,
+	BUTTON_ID_NONE
 }button_id_e;
 
 void BUTTONS_initBtn(button_id_e button_id, GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin);

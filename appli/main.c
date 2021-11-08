@@ -16,6 +16,7 @@
 #include "photoR.h"
 #include "buttons.h"
 #include "light.h"
+#include "store.h"
 
 void writeLED(bool_e b)
 {
@@ -62,24 +63,56 @@ int main(void)
 
 	ADC_init();
 	LIGHT_init();
+	CAPTEURS_init();
+	STORE_init();
 
 	printf("test init");
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
-	/*BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
-	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
+	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
+	/*BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
 
+	storeState_e lastStoreWay = STORE_DOWN;
 
 	while(1)	//boucle de t�che de fond
 	{
 		if(!t)
 		{
+
 			t = 10;
 			switch(BUTTONS_press_event()) {
 				case BUTTON_ID_LIGHT:
 					printf("test");
-					HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+					//STORE_setState(motorWay ? STORE_UP : STORE_DOWN);
+					//motorWay = !motorWay;
+					LIGHT_set_state(!LIGHT_get_state());
+
+
+					if (STORE_getState() == STORE_UP || STORE_getState() == STORE_DOWN)
+						STORE_setState(STORE_STOP);
+					else{
+						switch (lastStoreWay) {
+							case STORE_DOWN:
+								STORE_setState(STORE_UP);
+							break;
+							case STORE_UP:
+								STORE_setState(STORE_DOWN);
+							break;
+						}
+						lastStoreWay = STORE_getState();
+					}
 					break;
 				case BUTTON_ID_STORE:
+					if (STORE_getState() == STORE_UP || STORE_getState() == STORE_DOWN)
+						STORE_setState(STORE_STOP);
+					else{
+						switch (lastStoreWay) {
+							case STORE_DOWN:
+								STORE_setState(STORE_UP);
+							case STORE_UP:
+								STORE_setState(STORE_DOWN);
+							break;
+						}
+					}
 					break;
 				case BUTTON_ID_WINDOW:
 					break;
@@ -89,11 +122,12 @@ int main(void)
 
 
 		}
-		printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
+		STORE_process();
+		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);
 		else
-			LIGHT_set_state(FALSE);
+			LIGHT_set_state(FALSE);*/
 
 	}
 }

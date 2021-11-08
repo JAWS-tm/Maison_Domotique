@@ -1,39 +1,54 @@
 
 #include "store.h"
+#include "stm32f1_timer.h"
+#include "stm32f1_motorDC.h"
+#include "capteurs.h"
 
-/*void STORE_init(){
-	BSP_GPIO_PinCfg(CAPTEUR_up_GPIO, CAPTEUR_up_PIN, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH);
+#define PWM_FIN_TIMER_ID TIMER1_ID
+#define PWM_FIN_TIMER_CHANNEL TIM_CHANNEL_3
 
-	if(CAPTEUR_down())
-		while(CAPTEUR_down())
-			//remonter volet
-		//stop volet
-			while(!CAPTEUR_down())
-			//baisser volet
-		//stop volet
-}*/
+#define PWM_RIN_TIMER_ID TIMER1_ID
+#define PWM_RIN_TIMER_CHANNEL TIM_CHANNEL_3
 
 
+static motor_id_e motor_id;
 
-void testPWM(){
-	TIMER_enable_PWM(TIMER1_ID, TIM_CHANNEL_3, 150, FALSE, FALSE);
-	TIMER_set_duty(TIMER1_ID, TIM_CHANNEL_3, /*set duty*/);
+static storeState_e storeState = STORE_STOP;
+
+void STORE_init(){
+	motor_id = MOTOR_add(GPIOA, GPIO_PIN_10, GPIOB, GPIO_PIN_15);
+	if (motor_id == MOTOR_ID_NONE)
+		printf("erreur moteur");
 }
 
-void set_storeState(e_storeState local){
-	storeState = local;
+void STORE_setState(storeState_e state){
+	storeState = state;
 
-	switch (storeState){
-		case STORE_UP :
-			//monter le volet
+	switch (state){
+		case STORE_INIT:
+
+			break;
+		case STORE_UP:
+			MOTOR_set_duty(motor_id, 40);
 			break;
 		case STORE_DOWN:
-			//descendre le volet
+			MOTOR_set_duty(motor_id, -40);
 			break;
 		case STORE_STOP:
-			//stoper le volet
+			MOTOR_set_duty(motor_id, 0);
 			break;
 	}
+}
+
+storeState_e STORE_getState(){
+	return storeState;
+}
+
+void STORE_process(){
+	if (storeState == STORE_UP && !CAPTEUR_up())
+		STORE_setState(STORE_STOP);
+	else if (storeState == STORE_DOWN && CAPTEUR_down())
+		STORE_setState(STORE_STOP);
 }
 
 

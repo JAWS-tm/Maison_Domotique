@@ -15,15 +15,11 @@ void CAPTEURS_init(){
 
 
 bool_e CAPTEUR_up(){
-	if(HAL_GPIO_ReadPin(CAPTEUR_up_GPIO, CAPTEUR_up_PIN))
-		return TRUE;
-	else
-		return FALSE;
+	return !HAL_GPIO_ReadPin(CAPTEUR_up_GPIO, CAPTEUR_up_PIN);
+
 }
 
 bool_e CAPTEUR_down(){
-	if(HAL_GPIO_ReadPin(CAPTEUR_down_GPIO, CAPTEUR_down_PIN))
-		return TRUE;
-	else
-		return FALSE;
+	return !HAL_GPIO_ReadPin(CAPTEUR_down_GPIO, CAPTEUR_down_PIN);
+
 }

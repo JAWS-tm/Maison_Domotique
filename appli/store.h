@@ -12,11 +12,16 @@
 #include "config.h"
 
 typedef enum{
+	STORE_INIT,
 	STORE_UP,
 	STORE_DOWN,
 	STORE_STOP
-}e_storeState;
+}storeState_e;
 
-e_storeState storeState;
+
+void STORE_init();
+
+void STORE_setState(storeState_e local);
+void STORE_process();
 
 #endif /* STORE_H_ */
