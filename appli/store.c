@@ -13,7 +13,7 @@
 
 static motor_id_e motor_id;
 
-static storeState_e storeState = STORE_STOP;
+static storeState_e storeState = STORE_INIT;
 
 void STORE_init(){
 	motor_id = MOTOR_add(GPIOA, GPIO_PIN_10, GPIOB, GPIO_PIN_15);
@@ -26,7 +26,10 @@ void STORE_setState(storeState_e state){
 
 	switch (state){
 		case STORE_INIT:
-
+			if (CAPTEUR_down())
+				MOTOR_set_duty(motor_id, 40);
+			else
+				MOTOR_set_duty(motor_id, -40);
 			break;
 		case STORE_UP:
 			MOTOR_set_duty(motor_id, 40);
