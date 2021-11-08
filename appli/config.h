@@ -129,7 +129,7 @@
 #define USE_APDS9960			0	//Capteur de gestes, de couleur, de luminosité ambiante
 #define USE_BH1750FVI			0	//Capteur de luminosité ambiante
 #define USE_BMP180				0	//Capteur de pression
-#define USE_MOTOR_DC			0
+#define USE_MOTOR_DC			1
 #define USE_RTC					0
 #define USE_PWM					0
 #define USE_ESP8266				0//Module Wifi

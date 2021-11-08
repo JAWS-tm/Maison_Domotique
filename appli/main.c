@@ -16,6 +16,7 @@
 
 #include "buttons.h"
 #include "light.h"
+#include "store.h"
 
 void writeLED(bool_e b)
 {
@@ -60,24 +61,70 @@ int main(void)
 	Systick_add_callback_function(&process_ms);
 
 	LIGHT_init();
+	CAPTEURS_init();
+	STORE_init();
 
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
 	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
+<<<<<<< Updated upstream
 	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
 
 	while(1)	//boucle de tâche de fond
+=======
+	/*BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
+
+	storeState_e lastStoreWay = STORE_DOWN;
+
+	while(1)	//boucle de tï¿½che de fond
+>>>>>>> Stashed changes
 	{
 
 		if(!t)
 		{
+
 			t = 10;
 			switch(BUTTONS_press_event()) {
 				case BUTTON_ID_LIGHT:
+<<<<<<< Updated upstream
 					printf("light\n");
 					LIGHT_set_state(!LIGHT_get_state());
 					break;
 				case BUTTON_ID_STORE:
 					printf("store\n");
+=======
+					printf("test");
+					//STORE_setState(motorWay ? STORE_UP : STORE_DOWN);
+					//motorWay = !motorWay;
+					LIGHT_set_state(!LIGHT_get_state());
+
+
+					if (STORE_getState() == STORE_UP || STORE_getState() == STORE_DOWN)
+						STORE_setState(STORE_STOP);
+					else{
+						switch (lastStoreWay) {
+							case STORE_DOWN:
+								STORE_setState(STORE_UP);
+							break;
+							case STORE_UP:
+								STORE_setState(STORE_DOWN);
+							break;
+						}
+						lastStoreWay = STORE_getState();
+					}
+					break;
+				case BUTTON_ID_STORE:
+					if (STORE_getState() == STORE_UP || STORE_getState() == STORE_DOWN)
+						STORE_setState(STORE_STOP);
+					else{
+						switch (lastStoreWay) {
+							case STORE_DOWN:
+								STORE_setState(STORE_UP);
+							case STORE_UP:
+								STORE_setState(STORE_DOWN);
+							break;
+						}
+					}
+>>>>>>> Stashed changes
 					break;
 				case BUTTON_ID_WINDOW:
 					printf("window\n");
@@ -88,6 +135,15 @@ int main(void)
 
 
 		}
+<<<<<<< Updated upstream
+=======
+		STORE_process();
+		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
+		if(PHOTO_R_getValue(INT) > 2700)
+			LIGHT_set_state(TRUE);
+		else
+			LIGHT_set_state(FALSE);*/
+>>>>>>> Stashed changes
 
 	}
 }
