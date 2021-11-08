@@ -13,7 +13,7 @@ typedef enum{
 	EXT
 }e_selectPhotoR;
 
-uint8_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR);
+uint16_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR);
 
 
 

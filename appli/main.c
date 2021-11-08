@@ -12,10 +12,10 @@
 #include "stm32f1_gpio.h"
 #include "macro_types.h"
 #include "systick.h"
+
 #include "photoR.h"
-
-
 #include "buttons.h"
+#include "light.h"
 
 void writeLED(bool_e b)
 {
@@ -45,10 +45,10 @@ int main(void)
 	//Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
 		//Attention, les pins PA2 et PA3 ne sont pas reli�es jusqu'au connecteur de la Nucleo.
 		//Ces broches sont redirig�es vers la sonde de d�bogage, la liaison UART �tant ensuite encapsul�e sur l'USB vers le PC de d�veloppement.
-	UART_init(UART2_ID,115200);
+	UART_init(UART1_ID,115200);
 
 	//"Indique que les printf sortent vers le p�riph�rique UART2."
-	SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
+	SYS_set_std_usart(UART1_ID, UART1_ID, UART1_ID);
 
 	//Initialisation du port de la led Verte (carte Nucleo)
 	BSP_GPIO_PinCfg(GPIOC, GPIO_PIN_13, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH);
@@ -59,6 +59,9 @@ int main(void)
 	//On ajoute la fonction process_ms � la liste des fonctions appel�es automatiquement chaque ms par la routine d'interruption du p�riph�rique SYSTICK
 	Systick_add_callback_function(&process_ms);
 
+
+	ADC_init();
+	LIGHT_init();
 
 	printf("test init");
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
@@ -88,7 +91,9 @@ int main(void)
 		}
 		printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
-			LIGHT_set_state(true);
+			LIGHT_set_state(TRUE);
+		else
+			LIGHT_set_state(FALSE);
 
 	}
 }
