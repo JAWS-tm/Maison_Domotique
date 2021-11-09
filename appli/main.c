@@ -60,16 +60,12 @@ int main(void)
 	//On ajoute la fonction process_ms � la liste des fonctions appel�es automatiquement chaque ms par la routine d'interruption du p�riph�rique SYSTICK
 	Systick_add_callback_function(&process_ms);
 
+
+
 	LIGHT_init();
 	CAPTEURS_init();
 	STORE_init();
 
-	ADC_init();
-	LIGHT_init();
-	CAPTEURS_init();
-	STORE_init();
-
-	printf("test init");
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
 	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
 	/*BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
@@ -78,7 +74,7 @@ int main(void)
 	storeState_e lastStoreWay = STORE_DOWN;
 
 	while(1)	//boucle de t�che de fond
->>>>>>> Stashed changes
+
 	{
 
 		if(!t)
@@ -87,45 +83,24 @@ int main(void)
 			t = 10;
 			switch(BUTTONS_press_event()) {
 				case BUTTON_ID_LIGHT:
-<<<<<<< Updated upstream
+
 					printf("light\n");
 					LIGHT_set_state(!LIGHT_get_state());
-					break;
-				case BUTTON_ID_STORE:
-					printf("store\n");
-=======
-					printf("test");
-					//STORE_setState(motorWay ? STORE_UP : STORE_DOWN);
-					//motorWay = !motorWay;
-					LIGHT_set_state(!LIGHT_get_state());
 
 
-					if (STORE_getState() == STORE_UP || STORE_getState() == STORE_DOWN)
+					if (STORE_getState() == STORE_IN_MOVE)// || STORE_getState() == STORE_DOWN)
 						STORE_setState(STORE_STOP);
-					else{
-						switch (lastStoreWay) {
-							case STORE_DOWN:
-								STORE_setState(STORE_UP);
-							break;
-							case STORE_UP:
-								STORE_setState(STORE_DOWN);
-							break;
-						}
+					else if(STORE_getState() == STORE_STOP){
+						if(STORE_DOWN)
+							STORE_setState(STORE_UP);
+						if(STORE_UP)
+							STORE_setState(STORE_DOWN);
+
 						lastStoreWay = STORE_getState();
 					}
 					break;
 				case BUTTON_ID_STORE:
-					if (STORE_getState() == STORE_UP || STORE_getState() == STORE_DOWN)
-						STORE_setState(STORE_STOP);
-					else{
-						switch (lastStoreWay) {
-							case STORE_DOWN:
-								STORE_setState(STORE_UP);
-							case STORE_UP:
-								STORE_setState(STORE_DOWN);
-							break;
-						}
-					}
+
 					break;
 				case BUTTON_ID_WINDOW:
 					printf("window\n");

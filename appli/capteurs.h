@@ -10,4 +10,10 @@
 
 #include "stm32f1xx.h"
 
+void CAPTEURS_init();
+
+bool_e CAPTEUR_up();
+
+bool_e CAPTEUR_down();
+
 #endif /* CAPTEURS_H_ */

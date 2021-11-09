@@ -4,16 +4,10 @@
 #include "stm32f1_motorDC.h"
 #include "capteurs.h"
 
-#define PWM_FIN_TIMER_ID TIMER1_ID
-#define PWM_FIN_TIMER_CHANNEL TIM_CHANNEL_3
-
-#define PWM_RIN_TIMER_ID TIMER1_ID
-#define PWM_RIN_TIMER_CHANNEL TIM_CHANNEL_3
-
 
 static motor_id_e motor_id;
-
-static storeState_e storeState = STORE_INIT;
+static storeState_e state = STORE_INIT;
+static storeState_e storeWay = STORE_STOP;
 
 void STORE_init(){
 	motor_id = MOTOR_add(GPIOA, GPIO_PIN_10, GPIOB, GPIO_PIN_15);
@@ -21,37 +15,67 @@ void STORE_init(){
 		printf("erreur moteur");
 }
 
-void STORE_setState(storeState_e state){
-	storeState = state;
-
-	switch (state){
-		case STORE_INIT:
-			if (CAPTEUR_down())
-				MOTOR_set_duty(motor_id, 40);
-			else
-				MOTOR_set_duty(motor_id, -40);
-			break;
-		case STORE_UP:
-			MOTOR_set_duty(motor_id, 40);
-			break;
-		case STORE_DOWN:
-			MOTOR_set_duty(motor_id, -40);
-			break;
-		case STORE_STOP:
-			MOTOR_set_duty(motor_id, 0);
-			break;
-	}
+void STORE_setState(storeState_e newState){
+	if (state != STORE_INIT)
+		state = newState;
 }
 
 storeState_e STORE_getState(){
-	return storeState;
+	return state;
 }
 
 void STORE_process(){
-	if (storeState == STORE_UP && !CAPTEUR_up())
-		STORE_setState(STORE_STOP);
-	else if (storeState == STORE_DOWN && CAPTEUR_down())
-		STORE_setState(STORE_STOP);
+	static storeState_e lastState = STORE_INIT;
+	bool_e entrance = (state != lastState);
+	lastState = state;
+
+	switch (state){
+		case STORE_INIT:
+			// Initialisation en haut
+
+			if (entrance && CAPTEUR_up()){
+				MOTOR_set_duty(motor_id, 40);
+			}
+
+			if (!CAPTEUR_up())
+				state = STORE_WAIT;
+
+
+			break;
+		case STORE_UP:
+			if (entrance){
+				MOTOR_set_duty(motor_id, 40);
+				storeWay = STORE_UP;
+			}
+
+			state = STORE_WAIT;
+			break;
+		case STORE_DOWN:
+			if (entrance){
+				MOTOR_set_duty(motor_id, -40);
+				storeWay = STORE_DOWN;
+			}
+
+			state = STORE_IN_MOVE;
+			break;
+
+		case STORE_IN_MOVE:
+			// anti-débordement
+			if ((storeWay == STORE_UP && !CAPTEUR_up()) || (storeWay == STORE_DOWN && CAPTEUR_down()))
+				state = STORE_STOP;
+
+			break;
+
+		case STORE_STOP:
+			if (entrance)
+				MOTOR_set_duty(motor_id, 0);
+
+			break;
+	}
+
+
+
+
 }
 
 
