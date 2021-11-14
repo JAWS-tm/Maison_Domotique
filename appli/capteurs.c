@@ -5,6 +5,7 @@
 
 #define CAPTEUR_up_GPIO GPIOB
 #define CAPTEUR_up_PIN GPIO_PIN_0
+
 #define CAPTEUR_down_GPIO GPIOB
 #define CAPTEUR_down_PIN GPIO_PIN_1
 

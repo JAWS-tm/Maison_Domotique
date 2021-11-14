@@ -9,11 +9,11 @@
 #define PHOTOR_H_
 
 typedef enum{
-	INT,
-	EXT
+	INTERIOR,
+	EXTERIOR
 }e_selectPhotoR;
 
-uint16_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR);
+int16_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR);
 
 
 
