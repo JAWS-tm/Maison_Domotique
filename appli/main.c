@@ -17,6 +17,7 @@
 #include "buttons.h"
 #include "light.h"
 #include "store.h"
+#include "window.h"
 
 void writeLED(bool_e b)
 {
@@ -72,7 +73,7 @@ int main(void)
 
 
 	storeState_e lastStoreWay = STORE_DOWN;
-
+	windowAction_e lastAction = STOP;
 	while(1)	//boucle de t�che de fond
 
 	{
@@ -88,21 +89,32 @@ int main(void)
 					LIGHT_set_state(!LIGHT_get_state());
 
 
-					if (STORE_getState() == STORE_IN_MOVE)// || STORE_getState() == STORE_DOWN)
+
+					break;
+				case BUTTON_ID_STORE:
+					if (STORE_getState() == STORE_IN_MOVE)
 						STORE_setState(STORE_STOP);
 					else if(STORE_getState() == STORE_STOP){
-						if(STORE_DOWN)
+						if(lastStoreWay == STORE_DOWN)
 							STORE_setState(STORE_UP);
-						if(STORE_UP)
+						else if(lastStoreWay == STORE_UP)
 							STORE_setState(STORE_DOWN);
 
 						lastStoreWay = STORE_getState();
 					}
 					break;
-				case BUTTON_ID_STORE:
-
-					break;
 				case BUTTON_ID_WINDOW:
+
+
+					if (WINDOW_getAction() == STOP)
+						if (lastAction == OPEN)
+							WINDOW_setAction(CLOSE);
+						else
+							WINDOW_setAction(OPEN);
+					else
+						WINDOW_setAction(STOP);
+
+
 					printf("window\n");
 					break;
 				default:
@@ -111,6 +123,7 @@ int main(void)
 
 
 		}
+		WINDOW_process();
 		STORE_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
