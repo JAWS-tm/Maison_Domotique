@@ -12,3 +12,5 @@ Debug/
 Maison_Domotique.launch
 
 Maison_Domotique.cfg
+
+*.cfg

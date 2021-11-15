@@ -47,10 +47,10 @@ int main(void)
 	//Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
 		//Attention, les pins PA2 et PA3 ne sont pas reli�es jusqu'au connecteur de la Nucleo.
 		//Ces broches sont redirig�es vers la sonde de d�bogage, la liaison UART �tant ensuite encapsul�e sur l'USB vers le PC de d�veloppement.
-	UART_init(UART1_ID,115200);
+	//UART_init(UART1_ID,115200);
 
 	//"Indique que les printf sortent vers le p�riph�rique UART2."
-	SYS_set_std_usart(UART1_ID, UART1_ID, UART1_ID);
+	//SYS_set_std_usart(UART1_ID, UART1_ID, UART1_ID);
 
 	//Initialisation du port de la led Verte (carte Nucleo)
 	//BSP_GPIO_PinCfg(GPIOC, GPIO_PIN_13, GPIO_MODE_OUTPUT_PP,GPIO_NOPULL,GPIO_SPEED_FREQ_HIGH);
