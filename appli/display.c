@@ -1,5 +1,6 @@
 #include "headers/display.h"
 #include "headers/temperature.h"
+#include "headers/auto.h"
 
 #include "stdlib.h"
 
@@ -25,7 +26,11 @@ void DISPLAY_process() {
 	if (temperature != -1 && abs((int8_t) ((temperature - lastTemp) * 10)) >= 5){ // >= 0.5
 		char str[50];
 		sprintf(str, "temperature : %f", temperature);
-		ILI9341_Puts(40,60,str,&Font_11x18,ILI9341_COLOR_BROWN,ILI9341_COLOR_WHITE);
+		ILI9341_Puts(40,60,str,&Font_11x18,ILI9341_COLOR_RED,ILI9341_COLOR_WHITE);
 		lastTemp = temperature;
 	}
+
+	static double lastMode = 0;
+	double mode = AUTO_getActive();
+
 }

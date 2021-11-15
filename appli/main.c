@@ -21,7 +21,7 @@
 #include "headers/window.h"
 #include "headers/display.h"
 #include "headers/auto.h"
-
+#include "headers/scene.h"
 
 
 static volatile uint32_t t = 0;
@@ -57,10 +57,12 @@ int main(void)
 	Systick_add_callback_function(&process_ms);
 
 	ADC_init();
+
 	DISPLAY_init();
 	LIGHT_init();
 	CAPTEURS_init();
 	STORE_init();
+	SCENE_init();
 
 
 	//DISPLAY_test();
@@ -68,11 +70,10 @@ int main(void)
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
 	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
 	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
-
+	BUTTONS_initBtn(BUTTON_ID_MODE, GPIOA, GPIO_PIN_3);
 
 	storeState_e lastStoreWay = STORE_DOWN;
 	windowAction_e lastWindowWay = CLOSE;
-	bool_e autoMode = FALSE;
 
 	while(1)	//boucle de t�che de fond
 
@@ -117,7 +118,8 @@ int main(void)
 					debug_printf("window\n");
 					break;
 				case BUTTON_ID_MODE:
-					autoMode = !autoMode;
+
+					AUTO_setActive(!AUTO_getActive());
 
 					break;
 				default:
@@ -131,8 +133,7 @@ int main(void)
 		STORE_process();
 		DISPLAY_process();
 		SCENE_process();
-		if (autoMode)
-            AUTO_process();
+		AUTO_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);
