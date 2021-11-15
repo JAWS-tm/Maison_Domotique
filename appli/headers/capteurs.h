@@ -9,6 +9,7 @@
 #define CAPTEURS_H_
 
 #include "stm32f1xx.h"
+#include "macro_types.h"
 
 void CAPTEURS_init();
 

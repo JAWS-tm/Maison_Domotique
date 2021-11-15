@@ -8,10 +8,10 @@
 
 int16_t PHOTO_R_getValue(e_selectPhotoR selectPhotoR){
 	if(selectPhotoR == INTERIOR)
-		return ADC_getValue(PHOTO_R_INT_ADC);
+		return 4095 - ADC_getValue(PHOTO_R_INT_ADC);
 
 	else if(selectPhotoR == EXTERIOR)
-		return ADC_getValue(PHOTO_R_EXT_ADC);
+		return 4095 - ADC_getValue(PHOTO_R_EXT_ADC);
 
 	return -1;
 }

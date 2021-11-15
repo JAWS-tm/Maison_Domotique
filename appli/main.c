@@ -20,17 +20,9 @@
 #include "headers/capteurs.h"
 #include "headers/window.h"
 #include "headers/display.h"
+#include "headers/auto.h"
 
 
-void writeLED(bool_e b)
-{
-	HAL_GPIO_WritePin(LED_GREEN_GPIO, LED_GREEN_PIN, b);
-}
-
-bool_e readButton(void)
-{
-	return !HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN);
-}
 
 static volatile uint32_t t = 0;
 void process_ms(void)
@@ -64,9 +56,7 @@ int main(void)
 	//On ajoute la fonction process_ms � la liste des fonctions appel�es automatiquement chaque ms par la routine d'interruption du p�riph�rique SYSTICK
 	Systick_add_callback_function(&process_ms);
 
-
 	ADC_init();
-
 	DISPLAY_init();
 	LIGHT_init();
 	CAPTEURS_init();
@@ -135,6 +125,7 @@ int main(void)
 		STORE_process();
 		DISPLAY_process();
 		SCENE_process();
+		AUTO_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);
