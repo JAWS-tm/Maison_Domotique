@@ -44,7 +44,7 @@ int main(void)
 {
 	//Initialisation de la couche logicielle HAL (Hardware Abstraction Layer)
 	//Cette ligne doit rester la premi�re �tape de la fonction main().
-	HAL_Init();
+ 	HAL_Init();
 
 
 	//Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
@@ -64,6 +64,8 @@ int main(void)
 	//On ajoute la fonction process_ms � la liste des fonctions appel�es automatiquement chaque ms par la routine d'interruption du p�riph�rique SYSTICK
 	Systick_add_callback_function(&process_ms);
 
+
+	ADC_init();
 
 	DISPLAY_init();
 	LIGHT_init();
@@ -91,8 +93,8 @@ int main(void)
 				case BUTTON_ID_LIGHT:
 
 					debug_printf("light\n");
-					LIGHT_set_state(!LIGHT_get_state());
-
+					//LIGHT_set_state(!LIGHT_get_state());
+					SCENE_next();
 					break;
 
 				case BUTTON_ID_STORE:
@@ -120,8 +122,6 @@ int main(void)
 					}else
 						WINDOW_setAction(STOP);
 
-
-
 					debug_printf("window\n");
 					break;
 				default:
@@ -129,11 +129,12 @@ int main(void)
 			}
 
 			WINDOW_process();
-			debug_printf("temp : %f", TEMPERATURE_get());
+
 		}
 
 		STORE_process();
 		DISPLAY_process();
+		SCENE_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);

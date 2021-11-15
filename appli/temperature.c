@@ -17,9 +17,9 @@ double TEMPERATURE_get() {
 	if (ADC_is_new_sample_available()){
 		int16_t adc =  ADC_getValue(TEMP_ADC);
 
-		int16_t voltage = (int16_t) (((3.3/4095) * adc) * 1000); // en mV
+		int16_t voltage = (int16_t) ((3.3/4095) * adc * 1000); // en mV
 
-		return (voltage - OFFSET_VOLTAGE) / TEMP_COEFF;
+		return (double)((voltage - OFFSET_VOLTAGE) / TEMP_COEFF);
 	}
 	return -1;
 }

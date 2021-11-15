@@ -15,15 +15,17 @@
 #define BLACK 0x000000
 #define WHITE 0xFFFFFF
 
+#define LED_NB 3
+
 static bool_e light_state = FALSE;
 static uint32_t general_color = 0x000000;
 
-static uint8_t led_number = 3;
 
 extern void WS2812S_send_pixel(uint32_t pixel, uint32_t gpio_pin_x, uint32_t * gpiox_bsrr);
 
 void LIGHT_init(){
 	BSP_GPIO_PinCfg(LED_STRIP_GPIO, LED_STRIP_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH);
+	LIGHT_set_state(FALSE);
 }
 
 void LIGHT_set_state(bool_e state) {
@@ -32,7 +34,7 @@ void LIGHT_set_state(bool_e state) {
 	uint32_t color = state ? WHITE : BLACK;
 
 	__disable_irq();
-	for(uint8_t i = 0; i < led_number; i++)
+	for(uint8_t i = 0; i < LED_NB; i++)
 		WS2812S_send_pixel(color, LED_STRIP_PIN, (uint32_t *) &LED_STRIP_GPIO->BSRR);
 	__enable_irq();
 }
@@ -41,15 +43,24 @@ bool_e LIGHT_get_state(){
 	return light_state;
 }
 
+// 0xGREEN/red/blue
 void LIGHT_set_color(uint8_t r, uint8_t g, uint8_t b) {
 	uint32_t color = (uint32_t) b;
-	color +=((uint32_t)g)<<8;
-	color += ((uint32_t)r)<<8;
+	color +=((uint32_t)r)<<8;
+	color += ((uint32_t)g)<<16;
 
 	__disable_irq();
-	for(uint8_t i = 0; i < led_number; i++)
+	for(uint8_t i = 0; i < LED_NB; i++)
 		WS2812S_send_pixel(color, LED_STRIP_PIN, (uint32_t *) &LED_STRIP_GPIO->BSRR);
 	__enable_irq();
 
 	general_color = color;
+}
+
+void LIGHT_send_data(uint32_t* colors) {
+	__disable_irq();
+	for(uint8_t i = 0; i < LED_NB; i++)
+		WS2812S_send_pixel(colors[i], LED_STRIP_PIN, (uint32_t *) &LED_STRIP_GPIO->BSRR);
+	__enable_irq();
+
 }

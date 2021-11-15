@@ -18,17 +18,26 @@ typedef struct {
 
 static button_port_t buttons[BUTTON_ID_NB];
 
+static volatile uint32_t t[BUTTON_ID_NB] = {0};
+void process_ms() {
+	for (int i = 0; i < BUTTON_ID_NB; i++)
+		t[i]--;
+
+}
 
 void BUTTONS_initBtn(button_id_e button_id, GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin) {
 	buttons[button_id].GPIOx = GPIOx;
 	buttons[button_id].GPIO_Pin = GPIO_Pin;
 
 	BSP_GPIO_PinCfg(GPIOx, GPIO_Pin, GPIO_MODE_INPUT, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH);
+
+	Systick_add_callback_function(&process_ms);
 }
 
 //TODO: return une structure qui contient l'état de chaque bouton
+
+static bool_e previous_state[BUTTON_ID_NB] = {FALSE};
 button_id_e BUTTONS_press_event(void) {
-	static bool_e previous_state[BUTTON_ID_NB] = {FALSE};
 	bool_e current_state;
 	button_id_e ret = BUTTON_ID_NONE;
 
@@ -41,4 +50,9 @@ button_id_e BUTTONS_press_event(void) {
 	}
 
 	return ret;
+}
+
+void BUTTON_process(){
+
+
 }
