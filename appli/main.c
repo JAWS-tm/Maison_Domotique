@@ -72,6 +72,8 @@ int main(void)
 
 	storeState_e lastStoreWay = STORE_DOWN;
 	windowAction_e lastWindowWay = CLOSE;
+	bool_e autoMode = FALSE;
+
 	while(1)	//boucle de t�che de fond
 
 	{
@@ -114,6 +116,10 @@ int main(void)
 
 					debug_printf("window\n");
 					break;
+				case BUTTON_ID_MODE:
+					autoMode = !autoMode;
+
+					break;
 				default:
 					break;
 			}
@@ -125,7 +131,8 @@ int main(void)
 		STORE_process();
 		DISPLAY_process();
 		SCENE_process();
-		AUTO_process();
+		if (autoMode)
+            AUTO_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);
