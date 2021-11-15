@@ -13,4 +13,8 @@ Maison_Domotique.launch
 
 Maison_Domotique.cfg
 
+.DS_Store
+
+*.launch
+
 *.cfg

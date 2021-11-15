@@ -17,7 +17,11 @@
 #include "buttons.h"
 #include "light.h"
 #include "store.h"
+<<<<<<< Updated upstream
 #include "window.h"
+=======
+#include "display.h"
+>>>>>>> Stashed changes
 
 void writeLED(bool_e b)
 {
@@ -66,6 +70,8 @@ int main(void)
 	LIGHT_init();
 	CAPTEURS_init();
 	STORE_init();
+	DISPLAY_init();
+	DISPLAY_test();
 
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
 	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
