@@ -1,8 +1,8 @@
 
-#include "store.h"
+#include "headers/store.h"
 #include "stm32f1_timer.h"
 #include "stm32f1_motorDC.h"
-#include "capteurs.h"
+#include "headers/capteurs.h"
 
 typedef enum{
 	DOWN = -40,
@@ -30,7 +30,7 @@ storeState_e STORE_getState(){
 }
 
 void STORE_process(){
-	static storeState_e lastState = STORE_INIT;
+	static storeState_e lastState = STORE_STOP;
 	bool_e entrance = (state != lastState);
 	lastState = state;
 

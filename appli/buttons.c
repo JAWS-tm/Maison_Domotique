@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stm32f1_gpio.h>
 #include "macro_types.h"
-#include "buttons.h"
+#include "headers/buttons.h"
 
 typedef struct {
 	button_id_e button_id;
@@ -33,7 +33,7 @@ button_id_e BUTTONS_press_event(void) {
 	button_id_e ret = BUTTON_ID_NONE;
 
 	for (button_id_e btn_id = 0; btn_id < BUTTON_ID_NB; btn_id++) {
-		current_state = HAL_GPIO_ReadPin(buttons[btn_id].GPIOx, buttons[btn_id].GPIO_Pin);
+		current_state = !HAL_GPIO_ReadPin(buttons[btn_id].GPIOx, buttons[btn_id].GPIO_Pin);
 		if (current_state && !previous_state[btn_id]) {
 			ret = btn_id;
 		}
@@ -41,5 +41,4 @@ button_id_e BUTTONS_press_event(void) {
 	}
 
 	return ret;
-#include <stm32f1_gpio.h>
 }

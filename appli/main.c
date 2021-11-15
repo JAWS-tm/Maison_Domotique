@@ -13,15 +13,14 @@
 #include "macro_types.h"
 #include "systick.h"
 
-#include "photoR.h"
-#include "buttons.h"
-#include "light.h"
-#include "store.h"
-<<<<<<< Updated upstream
-#include "window.h"
-=======
-#include "display.h"
->>>>>>> Stashed changes
+#include "headers/photoR.h"
+#include "headers/buttons.h"
+#include "headers/light.h"
+#include "headers/store.h"
+#include "headers/capteurs.h"
+#include "headers/window.h"
+#include "headers/display.h"
+
 
 void writeLED(bool_e b)
 {
@@ -66,37 +65,36 @@ int main(void)
 	Systick_add_callback_function(&process_ms);
 
 
-
+	DISPLAY_init();
 	LIGHT_init();
 	CAPTEURS_init();
 	STORE_init();
-	DISPLAY_init();
-	DISPLAY_test();
+
+
+	//DISPLAY_test();
 
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
 	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
-	/*BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);*/
+	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
 
 
 	storeState_e lastStoreWay = STORE_DOWN;
-	windowAction_e lastAction = STOP;
+	windowAction_e lastWindowWay = CLOSE;
 	while(1)	//boucle de t�che de fond
 
 	{
 
 		if(!t)
 		{
-
 			t = 10;
 			switch(BUTTONS_press_event()) {
 				case BUTTON_ID_LIGHT:
 
-					printf("light\n");
+					debug_printf("light\n");
 					LIGHT_set_state(!LIGHT_get_state());
 
-
-
 					break;
+
 				case BUTTON_ID_STORE:
 					if (STORE_getState() == STORE_IN_MOVE)
 						STORE_setState(STORE_STOP);
@@ -108,29 +106,34 @@ int main(void)
 
 						lastStoreWay = STORE_getState();
 					}
+					debug_printf("store\n");
 					break;
+
 				case BUTTON_ID_WINDOW:
 
-
-					if (WINDOW_getAction() == STOP)
-						if (lastAction == OPEN)
+					if (WINDOW_getAction() == STOP){
+						if (lastWindowWay == OPEN)
 							WINDOW_setAction(CLOSE);
 						else
 							WINDOW_setAction(OPEN);
-					else
+						lastWindowWay = WINDOW_getAction();
+					}else
 						WINDOW_setAction(STOP);
 
 
-					printf("window\n");
+
+					debug_printf("window\n");
 					break;
 				default:
 					break;
 			}
 
-
+			WINDOW_process();
+			debug_printf("temp : %f", TEMPERATURE_get());
 		}
-		WINDOW_process();
+
 		STORE_process();
+		DISPLAY_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);
@@ -138,4 +141,5 @@ int main(void)
 			LIGHT_set_state(FALSE);*/
 
 	}
+
 }

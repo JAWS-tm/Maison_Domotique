@@ -3,12 +3,12 @@
 #define WINDOW_H_
 
 #include "stm32f1_timer.h"
-#include "config.h"
+#include "headers/config.h"
 
 typedef enum {
-	CLOSE = -1,
+	OPEN = -1,
 	STOP,
-	OPEN,
+	CLOSE,
 }windowAction_e;
 
 void WINDOW_setAction(windowAction_e action);

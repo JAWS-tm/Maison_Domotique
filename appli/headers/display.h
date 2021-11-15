@@ -11,4 +11,6 @@
 
 void DISPLAY_init();
 void DISPLAY_test();
+void DISPLAY_process();
+
 #endif /* DISPLAY_H_ */
