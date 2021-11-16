@@ -134,7 +134,7 @@ int main(void)
 		STORE_process();
 		DISPLAY_process();
 		SCENE_process();
-		//AUTO_process();
+		AUTO_process();
 		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
 		if(PHOTO_R_getValue(INT) > 2700)
 			LIGHT_set_state(TRUE);

@@ -8,7 +8,9 @@
 #ifndef HEADERS_AUTO_H_
 #define HEADERS_AUTO_H_
 
-void AUTO_setActive()
+#include "macro_types.h"
+
+void AUTO_setActive();
 bool_e AUTO_getActive();
 void AUTO_process();
 
