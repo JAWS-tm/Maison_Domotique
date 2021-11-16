@@ -72,7 +72,7 @@ int main(void)
 	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
 	BUTTONS_initBtn(BUTTON_ID_MODE, GPIOA, GPIO_PIN_3);
 
-	storeState_e lastStoreWay = STORE_DOWN;
+	storeState_e lastStoreWay = STORE_UP;
 	windowAction_e lastWindowWay = CLOSE;
 
 	while(1)	//boucle de t�che de fond

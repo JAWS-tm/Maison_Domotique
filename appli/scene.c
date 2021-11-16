@@ -1,6 +1,6 @@
 #include "headers/scene.h"
 #include "headers/light.h"
-
+#include "systick.h"
 /*
 typedef struct {
 	uint32_t color[3];
@@ -14,16 +14,8 @@ void SCENE_next(){
 	goToNextScene = TRUE;
 }
 
-typedef struct {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+static ledColor_t dynamicColors[3];
 
-}color_t;
-
-static color_t dynamicColors[3];
-
-static color_t colorDynamic;
 
 static uint32_t t = 0;
 void process_delay() {
@@ -64,7 +56,7 @@ void SCENE_process() {
 			break;
 		case DEFAULT:
 			if (entrance)
-				LIGHT_set_color(255,255,150);
+				LIGHT_set_color(255, 200, 0);
 
 			if (goToNextScene){
 				scene = CHILL;
@@ -73,7 +65,44 @@ void SCENE_process() {
 			break;
 		case CHILL:
 			if (entrance)
-				LIGHT_send_data((uint32_t[]) {0xffcc54, 0xffd5ad, 0xd8ffba});
+				LIGHT_send_data((ledColor_t[]) {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}});
+
+			if (goToNextScene){
+				scene = DYNAMIC;
+				goToNextScene = FALSE;
+			}
+			break;
+
+		case DYNAMIC:
+
+			if (entrance) {
+				dynamicColors[0] = (ledColor_t) {255, 0, 0};
+				dynamicColors[1] = (ledColor_t) {125, 255, 0};
+				dynamicColors[2] = (ledColor_t) {0, 125, 255};
+				//colorDynamic = (color_t) {255, 0, 0};
+				t = 10;
+			}
+
+			if (!t){
+				t = 10;
+				for (int i = 0; i < 3; i++) {
+					if (dynamicColors[i].r == 255 && dynamicColors[i].g < 255 && dynamicColors[i].b == 0)
+						dynamicColors[i].g++;
+					else if (dynamicColors[i].r > 0 && dynamicColors[i].g == 255 && dynamicColors[i].b == 0)
+						dynamicColors[i].r--;
+					else if (dynamicColors[i].r == 0 && dynamicColors[i].g == 255 && dynamicColors[i].b < 255)
+						dynamicColors[i].b++;
+					else if (dynamicColors[i].r == 0 && dynamicColors[i].g > 0 && dynamicColors[i].b == 255)
+						dynamicColors[i].g--;
+					else if (dynamicColors[i].r < 255 && dynamicColors[i].g == 0 && dynamicColors[i].b == 255)
+						dynamicColors[i].r++;
+					else if (dynamicColors[i].r == 255 && dynamicColors[i].g == 0 && dynamicColors[i].b > 0)
+						dynamicColors[i].b--;
+				}
+
+
+				LIGHT_send_data(dynamicColors);//(colorDynamic.r, colorDynamic.g, colorDynamic.b);
+			}
 
 			if (goToNextScene){
 				scene = FUTUR;
@@ -82,47 +111,14 @@ void SCENE_process() {
 			break;
 		case FUTUR:
 			if (entrance)
-				LIGHT_send_data((uint32_t[]) {0x9f40ff, 0x3798fa, 0x31e0cc});
-
-			if (goToNextScene){
-				scene = DYNAMIC;
-				goToNextScene = FALSE;
-			}
-			break;
-		case DYNAMIC:
-
-			if (entrance) {
-				dynamicColors[0] = (color_t) {255, 0, 0};
-				dynamicColors[1] = (color_t) {255, 0, 0};
-				dynamicColors[2] = (color_t) {255, 0, 0};
-				colorDynamic = (color_t) {255, 0, 0};
-				t = 10;
-			}
-
-			if (!t){
-				t = 10;
-				if (colorDynamic.r == 255 && colorDynamic.g < 255 && colorDynamic.b == 0)
-					colorDynamic.g++;
-				else if (colorDynamic.r > 0 && colorDynamic.g == 255 && colorDynamic.b == 0)
-					colorDynamic.r--;
-				else if (colorDynamic.r == 0 && colorDynamic.g == 255 && colorDynamic.b < 255)
-					colorDynamic.b++;
-				else if (colorDynamic.r == 0 && colorDynamic.g > 0 && colorDynamic.b == 255)
-					colorDynamic.g--;
-				else if (colorDynamic.r < 255 && colorDynamic.g == 0 && colorDynamic.b == 255)
-					colorDynamic.r++;
-				else if (colorDynamic.r == 255 && colorDynamic.g == 0 && colorDynamic.b > 0)
-					colorDynamic.b--;
-
-				LIGHT_set_color(colorDynamic.r, colorDynamic.g, colorDynamic.b);
-			}
+				LIGHT_send_data((ledColor_t[]) {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}});
 
 			if (goToNextScene){
 				scene = OFF;
 				goToNextScene = FALSE;
 			}
 			break;
-
 	}
+
 
 }

@@ -51,8 +51,3 @@ button_id_e BUTTONS_press_event(void) {
 
 	return ret;
 }
-
-void BUTTON_process(){
-
-
-}

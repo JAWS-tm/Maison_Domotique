@@ -57,10 +57,25 @@ void LIGHT_set_color(uint8_t r, uint8_t g, uint8_t b) {
 	general_color = color;
 }
 
-void LIGHT_send_data(uint32_t* colors) {
+void LIGHT_send_data(ledColor_t* colorsStruct) {
+	uint32_t colors[LED_NB] = {0x000000};
+
+	for (int i = 0; i < LED_NB; i++) {
+		colors[i] = (uint32_t) colorsStruct[i].b;
+		colors[i] +=((uint32_t) colorsStruct[i].r)<<8;
+		colors[i] += ((uint32_t) colorsStruct[i].g)<<16;
+	}
+
 	__disable_irq();
 	for(uint8_t i = 0; i < LED_NB; i++)
 		WS2812S_send_pixel(colors[i], LED_STRIP_PIN, (uint32_t *) &LED_STRIP_GPIO->BSRR);
 	__enable_irq();
+
+}
+
+void light_off() {
+	Delay_us(100);
+	HAL_GPIO_WritePin(LED_STRIP_GPIO, LED_STRIP_PIN, 0);
+
 
 }
