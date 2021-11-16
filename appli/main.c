@@ -127,6 +127,7 @@ int main(void)
 			}
 
 			WINDOW_process();
+			//debug_printf("res : %d", PHOTO_R_getValue(INTERIOR));
 
 		}
 

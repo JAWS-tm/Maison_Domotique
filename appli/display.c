@@ -30,7 +30,12 @@ void DISPLAY_process() {
 		lastTemp = temperature;
 	}
 
-	static double lastMode = 0;
-	double mode = AUTO_getActive();
+	static bool_e lastAutoActive = TRUE;
+	if(lastAutoActive != AUTO_getActive()){
+		char str[50];
+		sprintf(str, "Mode auto: %s", (AUTO_getActive() ? "active" : "desactive"));
+		ILI9341_Puts(10, 200, str, &Font_11x18, ILI9341_COLOR_RED, ILI9341_COLOR_WHITE);
+		lastAutoActive = AUTO_getActive();
+	}
 
 }

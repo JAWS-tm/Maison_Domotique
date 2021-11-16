@@ -34,7 +34,7 @@ void BUTTONS_initBtn(button_id_e button_id, GPIO_TypeDef * GPIOx, uint16_t GPIO_
 	Systick_add_callback_function(&process_ms_butt);
 }
 
-//TODO: return une structure qui contient l'état de chaque bouton
+//TODO: return une structure qui contient l'ï¿½tat de chaque bouton
 
 static bool_e previous_state[BUTTON_ID_NB] = {FALSE};
 button_id_e BUTTONS_press_event(void) {
