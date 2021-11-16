@@ -13,8 +13,20 @@ typedef enum{
 static state_e state = LIGHT_STATE;
 static bool_e entrence = FALSE;
 
+static bool_e active = FALSE;
+
+void AUTO_setActive(bool_e state)
+{
+	active = state;
+}
+
+bool_e AUTO_getActive() {
+	return active;
+}
 
 void AUTO_process(){
+	if (!active)
+		return;
 
 	switch(state){
 		case LIGHT_STATE:

@@ -14,6 +14,27 @@ void SCENE_next(){
 	goToNextScene = TRUE;
 }
 
+typedef struct {
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+
+}color_t;
+
+static color_t dynamicColors[3];
+
+static color_t colorDynamic;
+
+static uint32_t t = 0;
+void process_delay() {
+	if (t)
+		t--;
+}
+
+void SCENE_init(){
+	Systick_add_callback_function(&process_delay);
+}
+
 void SCENE_process() {
 	typedef enum {
 		OFF,
@@ -69,12 +90,32 @@ void SCENE_process() {
 			}
 			break;
 		case DYNAMIC:
-			//static uint32_t* dynamicColors = {0xff0000, 0x00ff00, 0x0000ff};
-			/*if (entrance)
-				dynamicColors = {0xff0000, 0x00ff00, 0x0000ff};*/
 
+			if (entrance) {
+				dynamicColors[0] = (color_t) {255, 0, 0};
+				dynamicColors[1] = (color_t) {255, 0, 0};
+				dynamicColors[2] = (color_t) {255, 0, 0};
+				colorDynamic = (color_t) {255, 0, 0};
+				t = 10;
+			}
 
+			if (!t){
+				t = 10;
+				if (colorDynamic.r == 255 && colorDynamic.g < 255 && colorDynamic.b == 0)
+					colorDynamic.g++;
+				else if (colorDynamic.r > 0 && colorDynamic.g == 255 && colorDynamic.b == 0)
+					colorDynamic.r--;
+				else if (colorDynamic.r == 0 && colorDynamic.g == 255 && colorDynamic.b < 255)
+					colorDynamic.b++;
+				else if (colorDynamic.r == 0 && colorDynamic.g > 0 && colorDynamic.b == 255)
+					colorDynamic.g--;
+				else if (colorDynamic.r < 255 && colorDynamic.g == 0 && colorDynamic.b == 255)
+					colorDynamic.r++;
+				else if (colorDynamic.r == 255 && colorDynamic.g == 0 && colorDynamic.b > 0)
+					colorDynamic.b--;
 
+				LIGHT_set_color(colorDynamic.r, colorDynamic.g, colorDynamic.b);
+			}
 
 			if (goToNextScene){
 				scene = OFF;
