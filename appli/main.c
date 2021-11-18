@@ -23,6 +23,7 @@
 #include "headers/auto.h"
 #include "headers/scene.h"
 
+#include "headers/fan.h"
 
 static volatile uint32_t t = 0;
 void process_ms(void)
@@ -36,7 +37,8 @@ int main(void)
 {
 	//Initialisation de la couche logicielle HAL (Hardware Abstraction Layer)
 	//Cette ligne doit rester la premi�re �tape de la fonction main().
- 	HAL_Init();
+
+	HAL_Init();
 
 
 	//Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
@@ -59,10 +61,13 @@ int main(void)
 	ADC_init();
 
 	DISPLAY_init();
+
 	LIGHT_init();
+	SCENE_init();
+
 	CAPTEURS_init();
 	STORE_init();
-	SCENE_init();
+	FAN_init();
 
 
 	//DISPLAY_test();
@@ -72,7 +77,7 @@ int main(void)
 	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
 	BUTTONS_initBtn(BUTTON_ID_MODE, GPIOA, GPIO_PIN_3);
 
-	storeState_e lastStoreWay = STORE_UP;
+	storeWay_e lastStoreWay = STORE_WAY_UP;
 	windowAction_e lastWindowWay = CLOSE;
 
 	while(1)	//boucle de t�che de fond
@@ -91,15 +96,19 @@ int main(void)
 					break;
 
 				case BUTTON_ID_STORE:
-					if (STORE_getState() == STORE_IN_MOVE)
-						STORE_setState(STORE_STOP);
-					else if(STORE_getState() == STORE_STOP){
-						if(lastStoreWay == STORE_DOWN)
-							STORE_setState(STORE_UP);
-						else if(lastStoreWay == STORE_UP)
-							STORE_setState(STORE_DOWN);
 
-						lastStoreWay = STORE_getState();
+					if (STORE_getStatus() == STORE_MOVING)
+						STORE_setWay(STORE_WAY_STOP);
+					else {
+						storeWay_e newWay;
+						if(lastStoreWay == STORE_WAY_DOWN)
+							newWay = STORE_WAY_UP;
+						else if(lastStoreWay == STORE_WAY_UP)
+							newWay = STORE_WAY_DOWN;
+
+						STORE_setWay(newWay);
+						lastStoreWay = newWay;
+
 					}
 					debug_printf("store\n");
 					break;

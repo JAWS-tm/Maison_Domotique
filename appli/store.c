@@ -5,13 +5,17 @@
 #include "headers/capteurs.h"
 
 typedef enum{
-	DOWN = -40,
-	UP = 40
-}storeWay_e;
+	INIT,
+	GO_UP,
+	GO_DOWN,
+	GO_STOP,
+	IN_MOVE
+}storeState_e;
+
 
 static motor_id_e motor_id;
-static storeState_e state = STORE_INIT;
-static storeWay_e storeWay = DOWN;
+static storeState_e state = INIT;
+static storeWay_e storeWay = STORE_WAY_DOWN;
 
 
 void STORE_init(){
@@ -20,69 +24,86 @@ void STORE_init(){
 		printf("erreur initialisation moteur\n");
 }
 
-void STORE_setState(storeState_e newState){
-	if (state != STORE_INIT)
-		state = newState;
-}
-
-storeState_e STORE_getState(){
-	return state;
-}
 
 void STORE_process(){
-	static storeState_e lastState = STORE_STOP;
+	static storeState_e lastState = GO_STOP;
 	bool_e entrance = (state != lastState);
 	lastState = state;
 
 	switch (state){
-		case STORE_INIT:
+		case INIT:
 			// Initialisation en haut
 
 			if (entrance && CAPTEUR_up())
-				MOTOR_set_duty(motor_id, 40);
-
+				MOTOR_set_duty(motor_id, STORE_WAY_UP);
 
 			if (!CAPTEUR_up())
-				state = STORE_STOP;
+				state = GO_STOP;
 			break;
 
-		case STORE_UP:
+		case GO_UP:
 			if (entrance){
-				MOTOR_set_duty(motor_id, UP);
-				storeWay = UP;
+				MOTOR_set_duty(motor_id, STORE_WAY_UP);
+				storeWay = STORE_WAY_UP;
 			}
 
-			state = STORE_IN_MOVE;
+			state = IN_MOVE;
 			break;
 
-		case STORE_DOWN:
+		case GO_DOWN:
 			if (entrance){
-				MOTOR_set_duty(motor_id, DOWN);
-				storeWay = DOWN;
+				MOTOR_set_duty(motor_id, STORE_WAY_DOWN);
+				storeWay = STORE_WAY_DOWN;
 			}
 
-			state = STORE_IN_MOVE;
+			state = IN_MOVE;
 			break;
 
-		case STORE_IN_MOVE:
+		case IN_MOVE:
 			// anti-débordement
-			if ((storeWay == UP && !CAPTEUR_up()) || (storeWay == DOWN && CAPTEUR_down()))
-				state = STORE_STOP;
+			if ((storeWay == STORE_WAY_UP && !CAPTEUR_up()) || (storeWay == STORE_WAY_DOWN && CAPTEUR_down()))
+				state = GO_STOP;
 
 			break;
 
-		case STORE_STOP:
-			if (entrance)
-				MOTOR_set_duty(motor_id, 0);
+		case GO_STOP:
+			if (entrance){
+				MOTOR_set_duty(motor_id, STORE_WAY_STOP);
+				storeWay = STORE_WAY_STOP;
+			}
 
 			break;
 	}
-
-
-
-
 }
 
 
+void STORE_setWay(storeWay_e way) {
+	switch(way) {
+		case STORE_WAY_DOWN:
+			state = GO_DOWN;
+			break;
+		case STORE_WAY_STOP:
+			state = GO_STOP;
+			break;
+		case STORE_WAY_UP:
+			state = GO_UP;
+			break;
+	}
+
+}
+
+storeStatus_e STORE_getStatus() {
+	if (!CAPTEUR_up())
+		return STORE_OPENED;
+
+	else if (CAPTEUR_down())
+		return STORE_CLOSED;
+
+	else if (state == GO_STOP)
+		return STORE_STOPPED;
+
+	else
+		return STORE_MOVING;
+}
 
 

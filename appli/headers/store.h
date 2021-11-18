@@ -10,18 +10,22 @@
 #include "headers/config.h"
 
 typedef enum{
-	STORE_INIT,
-	STORE_UP,
-	STORE_DOWN,
-	STORE_STOP,
-	STORE_IN_MOVE
-}storeState_e;
+	STORE_WAY_DOWN = -40,
+	STORE_WAY_STOP = 0,
+	STORE_WAY_UP = 40
+}storeWay_e;
 
+typedef enum {
+	STORE_OPENED,
+	STORE_STOPPED,
+	STORE_CLOSED,
+	STORE_MOVING
+}storeStatus_e;
 
 void STORE_init();
 
-void STORE_setState(storeState_e local);
-storeState_e STORE_getState();
+storeStatus_e STORE_getStatus();
+
 void STORE_process();
 
 #endif /* STORE_H_ */

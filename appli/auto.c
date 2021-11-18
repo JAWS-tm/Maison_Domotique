@@ -3,6 +3,10 @@
 #include "headers/store.h"
 #include "headers/photoR.h"
 #include "headers/light.h"
+#include "headers/fan.h"
+#include "headers/temperature.h"
+
+#define FAN_ACTIVATION_VALUE 22
 
 typedef enum{
 	INIT,
@@ -10,9 +14,6 @@ typedef enum{
 	LIGHT_STATE,
 	HIGHTLIGHT
 }state_e;
-
-static state_e state = INIT;
-static bool_e entrence = FALSE;
 
 static bool_e active = FALSE;
 
@@ -26,6 +27,8 @@ bool_e AUTO_getActive() {
 }
 
 void AUTO_process(){
+	static state_e state = INIT;
+
 	if (!active)
 		return;
 
@@ -33,28 +36,28 @@ void AUTO_process(){
 
 		case INIT:
 			LIGHT_set_state(FALSE);
+
 			state = LIGHT_STATE;
 			break;
 
 		case LIGHT_STATE:
 			if(PHOTO_R_getValue(INTERIOR) < 1000)
 				state = LOWLIGHT;
-
 			else if(PHOTO_R_getValue(INTERIOR) > 2700)
 				state = HIGHTLIGHT;
-
 			else
-				STORE_setState(STORE_STOP);
+				STORE_setWay(STORE_WAY_STOP);
 
+			FAN_setState(TEMPERATURE_get() > FAN_ACTIVATION_VALUE);
 			break;
 
 		case LOWLIGHT:
-			if(CAPTEUR_up() && LIGHT_get_state()==FALSE){
-				STORE_setState(STORE_UP);
-			}
-			else if(!CAPTEUR_up() && LIGHT_get_state()==FALSE){
+			if(CAPTEUR_up() && LIGHT_get_state()==FALSE)
+				STORE_setWay(STORE_WAY_UP);
+
+			else if(!CAPTEUR_up() && LIGHT_get_state()==FALSE)
 				LIGHT_set_state(TRUE);
-			}
+
 			state = LIGHT_STATE;
 			break;
 
@@ -63,7 +66,7 @@ void AUTO_process(){
 				if (LIGHT_get_state())
 					LIGHT_set_state(FALSE);
 				else
-					STORE_setState(STORE_DOWN);
+					STORE_setWay(STORE_WAY_DOWN);
 			}
 
 

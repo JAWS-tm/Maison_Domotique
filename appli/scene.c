@@ -9,13 +9,16 @@ typedef struct {
 */
 
 static bool_e goToNextScene = FALSE;
+static scene_e scene = OFF;
+static ledColor_t dynamicColors[3];
 
 void SCENE_next(){
 	goToNextScene = TRUE;
 }
 
-static ledColor_t dynamicColors[3];
-
+scene_e SCENE_get() {
+	return scene;
+}
 
 static uint32_t t = 0;
 void process_delay() {
@@ -27,16 +30,8 @@ void SCENE_init(){
 	Systick_add_callback_function(&process_delay);
 }
 
-void SCENE_process() {
-	typedef enum {
-		OFF,
-		DEFAULT,
-		CHILL,
-		FUTUR,
-		DYNAMIC
-	} scene_e;
 
-	static scene_e scene = DEFAULT;
+void SCENE_process() {
 	static scene_e lastScene = DYNAMIC;
 
 	bool_e entrance = (scene != lastScene);
@@ -69,6 +64,16 @@ void SCENE_process() {
 
 			if (goToNextScene){
 				scene = DYNAMIC;
+				goToNextScene = FALSE;
+			}
+			break;
+
+		case FUTUR:
+			if (entrance)
+				LIGHT_send_data((ledColor_t[]) {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}});
+
+			if (goToNextScene){
+				scene = OFF;
 				goToNextScene = FALSE;
 			}
 			break;
@@ -109,15 +114,7 @@ void SCENE_process() {
 				goToNextScene = FALSE;
 			}
 			break;
-		case FUTUR:
-			if (entrance)
-				LIGHT_send_data((ledColor_t[]) {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}});
 
-			if (goToNextScene){
-				scene = OFF;
-				goToNextScene = FALSE;
-			}
-			break;
 	}
 
 

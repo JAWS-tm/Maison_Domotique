@@ -13,6 +13,7 @@ typedef enum {
 
 void WINDOW_setAction(windowAction_e action);
 
+windowAction_e WINDOW_getStatus();
 windowAction_e WINDOW_getAction();
 
 void WINDOW_process();

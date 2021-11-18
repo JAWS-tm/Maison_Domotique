@@ -26,6 +26,15 @@ windowAction_e WINDOW_getAction() {
 	return actionWay;
 }
 
+windowAction_e WINDOW_getStatus() {
+	if (servoDuty > MIN_DUTY && servoDuty < MAX_DUTY)
+		return actionWay;
+	else if (servoDuty == MIN_DUTY)
+		return OPEN;
+	else if (servoDuty == MAX_DUTY)
+		return CLOSE;
+}
+
 
 void WINDOW_process() {
 	typedef enum {

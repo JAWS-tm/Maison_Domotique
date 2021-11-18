@@ -31,6 +31,7 @@ void LIGHT_init(){
 void LIGHT_set_state(bool_e state) {
 	light_state = state;
 
+
 	uint32_t color = state ? WHITE : BLACK;
 
 	__disable_irq();
@@ -73,9 +74,3 @@ void LIGHT_send_data(ledColor_t* colorsStruct) {
 
 }
 
-void light_off() {
-	Delay_us(100);
-	HAL_GPIO_WritePin(LED_STRIP_GPIO, LED_STRIP_PIN, 0);
-
-
-}
