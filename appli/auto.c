@@ -19,7 +19,12 @@ static bool_e active = FALSE;
 
 void AUTO_setActive(bool_e state)
 {
+	if (active && !state) {
+		LIGHT_set_state(FALSE);
+		FAN_setState(FALSE);
+	}
 	active = state;
+
 }
 
 bool_e AUTO_getActive() {
@@ -41,7 +46,7 @@ void AUTO_process(){
 			break;
 
 		case LIGHT_STATE:
-			if(PHOTO_R_getValue(INTERIOR) < 1000)
+			if(PHOTO_R_getValue(INTERIOR) < 1200)
 				state = LOWLIGHT;
 			else if(PHOTO_R_getValue(INTERIOR) > 2700)
 				state = HIGHTLIGHT;

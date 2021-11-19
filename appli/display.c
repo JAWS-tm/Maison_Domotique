@@ -5,6 +5,7 @@
 #include "headers/scene.h"
 #include "headers/window.h"
 #include "headers/fan.h"
+#include "headers/light.h"
 
 #include "math.h"
 #include "headers/icons.h"
@@ -15,8 +16,8 @@
 #define WHITE ILI9341_COLOR_WHITE
 #define FONT &Font_11x18
 
-#define SPACE_Y 37
-#define SPACE_X 30
+#define SPACE_Y 45
+#define SPACE_X 32
 #define Y_OFFSET 20
 
 void centeredText(uint16_t x, uint16_t y, char * text, bool_e clearLine);
@@ -98,32 +99,38 @@ void DISPLAY_process() {
 
 	static scene_e lastScene = DEFAULT;
 	scene_e scene = SCENE_get();
+	static bool_e lastLightState = FALSE;
 
-	if (lastScene != scene) {
+	if (lastScene != scene || lastLightState != LIGHT_get_state()) {
 
 		char sceneName[10];
-		switch(scene){
-			case OFF:
-				strcpy(sceneName, "OFF");
-				break;
-			case DEFAULT:
-				strcpy(sceneName, "ON");
-				break;
-			case FUTUR:
-				strcpy(sceneName, "FUTUR");
-				break;
-			case CHILL:
-				strcpy(sceneName, "CHILL");
-				break;
-			case DYNAMIC:
-				strcpy(sceneName, "DYNAMIC");
-				break;
-			default:
-				break;
+		if (LIGHT_get_state()) {
+			strcpy(sceneName, "ON");
+		}else {
+			switch(scene){
+				case OFF:
+					strcpy(sceneName, "OFF");
+					break;
+				case DEFAULT:
+					strcpy(sceneName, "JOUR");
+					break;
+				case FUTUR:
+					strcpy(sceneName, "SOIREE");
+					break;
+				case CHILL:
+					strcpy(sceneName, "CHILL");
+					break;
+				case DYNAMIC:
+					strcpy(sceneName, "DYNAMIC");
+					break;
+				default:
+					break;
 
+			}
 		}
 		centeredText(SPACE_X + 32, Y_OFFSET + SPACE_Y + 2*64 + 5, sceneName, TRUE);
 		lastScene = scene;
+		lastLightState = LIGHT_get_state();
 	}
 
 	static double lastTemp = 0;

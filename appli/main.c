@@ -93,6 +93,7 @@ int main(void)
 					debug_printf("light\n");
 					//LIGHT_set_state(!LIGHT_get_state());
 					SCENE_next();
+					AUTO_setActive(FALSE);
 					break;
 
 				case BUTTON_ID_STORE:
@@ -110,6 +111,7 @@ int main(void)
 						lastStoreWay = newWay;
 
 					}
+					AUTO_setActive(FALSE);
 					debug_printf("store\n");
 					break;
 

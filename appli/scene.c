@@ -51,7 +51,7 @@ void SCENE_process() {
 			break;
 		case DEFAULT:
 			if (entrance)
-				LIGHT_set_color(255, 200, 0);
+				LIGHT_set_color(255, 246, 212);
 
 			if (goToNextScene){
 				scene = CHILL;
@@ -60,20 +60,20 @@ void SCENE_process() {
 			break;
 		case CHILL:
 			if (entrance)
-				LIGHT_send_data((ledColor_t[]) {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}});
+				LIGHT_send_data((ledColor_t[]) {{255, 247, 0}, {255, 72, 0}, {255, 123, 0}});
 
 			if (goToNextScene){
-				scene = DYNAMIC;
+				scene = FUTUR;
 				goToNextScene = FALSE;
 			}
 			break;
 
 		case FUTUR:
 			if (entrance)
-				LIGHT_send_data((ledColor_t[]) {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}});
+				LIGHT_send_data((ledColor_t[]) {{255, 0, 183}, {35, 5, 255}, {221, 0, 255}});
 
 			if (goToNextScene){
-				scene = OFF;
+				scene = DYNAMIC;
 				goToNextScene = FALSE;
 			}
 			break;
@@ -82,8 +82,8 @@ void SCENE_process() {
 
 			if (entrance) {
 				dynamicColors[0] = (ledColor_t) {255, 0, 0};
-				dynamicColors[1] = (ledColor_t) {125, 255, 0};
-				dynamicColors[2] = (ledColor_t) {0, 125, 255};
+				dynamicColors[1] = (ledColor_t) {255, 125, 0};
+				dynamicColors[2] = (ledColor_t) {125, 255, 0};
 				//colorDynamic = (color_t) {255, 0, 0};
 				t = 10;
 			}
@@ -110,7 +110,7 @@ void SCENE_process() {
 			}
 
 			if (goToNextScene){
-				scene = FUTUR;
+				scene = OFF;
 				goToNextScene = FALSE;
 			}
 			break;
