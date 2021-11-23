@@ -10,6 +10,7 @@
 #include "stm32f1_uart.h"
 #include "stm32f1_sys.h"
 #include "stm32f1_gpio.h"
+#include "stm32f1_adc.h"
 #include "macro_types.h"
 #include "systick.h"
 
@@ -70,8 +71,6 @@ int main(void)
 	FAN_init();
 
 
-	//DISPLAY_test();
-
 	BUTTONS_initBtn(BUTTON_ID_LIGHT, GPIOB, GPIO_PIN_9);
 	BUTTONS_initBtn(BUTTON_ID_STORE, GPIOB, GPIO_PIN_8);
 	BUTTONS_initBtn(BUTTON_ID_WINDOW, GPIOB, GPIO_PIN_7);
@@ -91,7 +90,7 @@ int main(void)
 				case BUTTON_ID_LIGHT:
 
 					debug_printf("light\n");
-					//LIGHT_set_state(!LIGHT_get_state());
+
 					SCENE_next();
 					AUTO_setActive(FALSE);
 					break;
@@ -112,6 +111,7 @@ int main(void)
 
 					}
 					AUTO_setActive(FALSE);
+
 					debug_printf("store\n");
 					break;
 
@@ -138,7 +138,6 @@ int main(void)
 			}
 
 			WINDOW_process();
-			//debug_printf("res : %d", PHOTO_R_getValue(INTERIOR));
 
 		}
 
@@ -146,12 +145,6 @@ int main(void)
 		DISPLAY_process();
 		SCENE_process();
 		AUTO_process();
-		/*printf("valeur photo-resistance intertieur , %d",PHOTO_R_getValue(INT));
-		if(PHOTO_R_getValue(INT) > 2700)
-			LIGHT_set_state(TRUE);
-		else
-			LIGHT_set_state(FALSE);*/
-
 	}
 
 }

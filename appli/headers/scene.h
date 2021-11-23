@@ -12,6 +12,7 @@ typedef enum {
 
 void SCENE_init();
 void SCENE_process();
+void SCENE_next();
 scene_e SCENE_get();
 
 #endif

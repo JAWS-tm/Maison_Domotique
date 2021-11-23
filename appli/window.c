@@ -68,7 +68,6 @@ void WINDOW_process() {
 			TIMER_set_duty(WINDOW_TIMER, WINDOW_CHANNEL, servoDuty);
 
 
-
 			break;
 
 		case WAITING_ACTION:

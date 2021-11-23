@@ -25,7 +25,7 @@ typedef enum {
 void STORE_init();
 
 storeStatus_e STORE_getStatus();
-
+void STORE_setWay(storeWay_e way);
 void STORE_process();
 
 #endif /* STORE_H_ */
